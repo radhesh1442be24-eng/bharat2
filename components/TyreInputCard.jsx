@@ -7,7 +7,12 @@ import {
   AVAILABLE_RIM_DIAMETERS,
   MM_PER_INCH,
 } from '../lib/constants.js';
-import vehiclesData from '../data/vehicles.json';
+import {
+  getMakes,
+  getModelsForMake,
+  getVariantsForModel,
+  getVehicleByDetails,
+} from '../lib/vehiclesData.js';
 import { ArrowRight, Car, Sliders, Check, HelpCircle } from 'lucide-react';
 
 export const TyreInputCard = ({
@@ -44,32 +49,29 @@ export const TyreInputCard = ({
     setRimDiameter(currentInput.rimDiameter);
   }
 
-  // Derive unique makes, models, variants
-  const makes = Array.from(new Set(vehiclesData.map((v) => v.make)));
-  const modelsForMake = vehiclesData
-    .filter((v) => v.make === selectedMake)
-    .map((v) => v.model);
-  const uniqueModels = Array.from(new Set(modelsForMake));
-
-  const variantsForModel = vehiclesData.filter(
-    (v) => v.make === selectedMake && v.model === selectedModel
-  );
+  // Derive unique makes, models, variants using lib/vehiclesData.js
+  const makes = getMakes();
+  const uniqueModels = selectedMake ? getModelsForMake(selectedMake) : [];
+  const variantsForModel = (selectedMake && selectedModel)
+    ? getVariantsForModel(selectedMake, selectedModel)
+    : [];
 
   const handleVehicleSelect = (variantName) => {
     setSelectedVariant(variantName);
-    const vehicleMatch = vehiclesData.find(
-      (v) => v.make === selectedMake && v.model === selectedModel && v.variant === variantName
-    );
-    if (vehicleMatch) {
-      setWidth(vehicleMatch.width);
-      setAspectRatio(vehicleMatch.aspectRatio);
-      setRimDiameter(vehicleMatch.rim);
+    const vehicleMatch = getVehicleByDetails(selectedMake, selectedModel, variantName);
+    if (vehicleMatch && vehicleMatch.oemTyre) {
+      setWidth(vehicleMatch.oemTyre.width);
+      setAspectRatio(vehicleMatch.oemTyre.aspectRatio);
+      setRimDiameter(vehicleMatch.oemTyre.rim);
       setIsCustomWidth(false);
-      onCalculate({
-        width: vehicleMatch.width,
-        aspectRatio: vehicleMatch.aspectRatio,
-        rimDiameter: vehicleMatch.rim,
-      });
+      onCalculate(
+        {
+          width: vehicleMatch.oemTyre.width,
+          aspectRatio: vehicleMatch.oemTyre.aspectRatio,
+          rimDiameter: vehicleMatch.oemTyre.rim,
+        },
+        vehicleMatch
+      );
     }
   };
 
@@ -357,7 +359,7 @@ export const TyreInputCard = ({
                   <option value="">-- Select Variant --</option>
                   {variantsForModel.map((v) => (
                     <option key={v.variant} value={v.variant}>
-                      {v.variant} ({v.width}/{v.aspectRatio} R{v.rim})
+                      {v.variant} ({v.oemTyre.width}/{v.oemTyre.aspectRatio} R{v.oemTyre.rim})
                     </option>
                   ))}
                 </select>

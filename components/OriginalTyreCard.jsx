@@ -1,7 +1,7 @@
 import React from 'react';
 import { MM_PER_INCH, KM_PER_MILE } from '../lib/constants.js';
 
-export const OriginalTyreCard = ({ specs, unit }) => {
+export const OriginalTyreCard = ({ specs, unit, vehicle = null }) => {
   // Conversions for dual unit technical specs
   const widthInches = (specs.width / MM_PER_INCH).toFixed(2);
   const sidewallInches = (specs.sidewallHeight / MM_PER_INCH).toFixed(2);
@@ -30,7 +30,7 @@ export const OriginalTyreCard = ({ specs, unit }) => {
           <div className="flex items-center gap-2">
             <div className="w-1.5 h-4 bg-[#087FEA] rounded-full" />
             <span className="text-xs font-bold text-[#172033] uppercase tracking-wider">
-              Original Tyre Specifications
+              {vehicle ? `${vehicle.make} ${vehicle.model}` : 'Original Tyre Specifications'}
             </span>
           </div>
           <span className="text-xs font-bold text-[#087FEA] bg-blue-50 px-2.5 py-1 rounded-md border border-blue-200">
@@ -38,8 +38,21 @@ export const OriginalTyreCard = ({ specs, unit }) => {
           </span>
         </div>
 
+        {vehicle && (
+          <div className="mt-2.5 p-2 bg-[#F8FAFC] border border-[#E2E8F0] rounded text-[11px] text-slate-700 flex flex-wrap justify-between items-center gap-1">
+            <span className="font-semibold text-slate-900">
+              {vehicle.variant} ({vehicle.year || 'Current'})
+            </span>
+            <div className="flex items-center gap-2 text-[10px] text-slate-600">
+              <span>OEM Load: <strong>{vehicle.loadIndex ?? 'Unknown'}</strong></span>
+              <span>•</span>
+              <span>OEM Speed: <strong>{vehicle.speedRating ?? 'Unknown'}</strong></span>
+            </div>
+          </div>
+        )}
+
         {/* Content Grid: Tyre Visual SVG + Detailed Specs List */}
-        <div className="grid grid-cols-1 sm:grid-cols-12 gap-4 items-center mt-4">
+        <div className="grid grid-cols-1 sm:grid-cols-12 gap-4 items-center mt-3">
           
           {/* Tyre SVG Graphic with Live Height & Revs Overlay */}
           <div className="sm:col-span-5 flex flex-col items-center justify-center relative bg-[#F8FAFC] border border-[#E2E8F0] p-3 rounded-md">
@@ -154,6 +167,11 @@ export const OriginalTyreCard = ({ specs, unit }) => {
             </div>
           </div>
         </div>
+        {vehicle?.source && (
+          <div className="mt-2 text-[10px] text-slate-400 italic">
+            Source: {vehicle.source}
+          </div>
+        )}
       </div>
     </div>
   );

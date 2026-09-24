@@ -31,19 +31,23 @@ export default function Home() {
   // Selected candidate state
   const [selectedCandidate, setSelectedCandidate] = useState(null);
 
+  // Selected vehicle state (if selected via car model lookup)
+  const [selectedVehicle, setSelectedVehicle] = useState(null);
+
   // Compute specs for original tyre (canonical internal specs)
   const originalSpecs = useMemo(() => {
     return calculateTyreSpecs(currentDimension);
   }, [currentDimension]);
 
-  // Compute candidates for current specs
+  // Compute candidates for current specs & vehicle metadata
   const candidateResults = useMemo(() => {
-    return getCandidateTyres(originalSpecs);
-  }, [originalSpecs]);
+    return getCandidateTyres(originalSpecs, selectedVehicle);
+  }, [originalSpecs, selectedVehicle]);
 
   // Handle calculation update
-  const handleCalculate = (newDimension) => {
+  const handleCalculate = (newDimension, vehicleObj = null) => {
     setCurrentDimension(newDimension);
+    setSelectedVehicle(vehicleObj);
     setSelectedCandidate(null);
   };
 
@@ -69,6 +73,7 @@ export default function Home() {
           <OriginalTyreCard
             specs={originalSpecs}
             unit={unit}
+            vehicle={selectedVehicle}
           />
         </div>
       </div>
