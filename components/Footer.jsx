@@ -1,7 +1,7 @@
 import React from 'react';
 import Link from 'next/link';
 
-export const Footer: React.FC = () => {
+export const Footer = () => {
   return (
     <footer className="bg-[#06152A]/85 backdrop-blur-md border border-white/10 text-slate-300 text-xs rounded-md p-6 sm:p-8 mt-2 shadow-sm">
       <div className="flex flex-col gap-6">
@@ -83,8 +83,3 @@ export const Footer: React.FC = () => {
     </footer>
   );
 };
-
-
-
-
-

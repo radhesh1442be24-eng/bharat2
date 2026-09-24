@@ -1,24 +1,10 @@
 'use client';
 
 import React, { useState } from 'react';
-import { CandidateTyre, UnitSystem, CandidateCategory } from '../types/tyre';
-import { DIAMETER_TARGET_PERCENT } from '../lib/constants';
+import { DIAMETER_TARGET_PERCENT, MM_PER_INCH } from '../lib/constants.js';
 import { CheckCircle2, ArrowUp, ArrowDown, Disc, CircleDot, AlertTriangle, ShieldCheck, Filter } from 'lucide-react';
 
-interface CandidatesListProps {
-  activeCategory: CandidateCategory;
-  onSelectCategory: (category: CandidateCategory) => void;
-  sameRimCandidates: CandidateTyre[];
-  upsizeCandidates: CandidateTyre[];
-  downsizeCandidates: CandidateTyre[];
-  similarCandidates: CandidateTyre[];
-  origRim: number;
-  selectedCandidate: CandidateTyre | null;
-  onSelectCandidate: (candidate: CandidateTyre) => void;
-  unit: UnitSystem;
-}
-
-export const CandidatesList: React.FC<CandidatesListProps> = ({
+export const CandidatesList = ({
   activeCategory,
   onSelectCategory,
   sameRimCandidates,
@@ -31,7 +17,7 @@ export const CandidatesList: React.FC<CandidatesListProps> = ({
   unit,
 }) => {
   // Filter mode: PRIMARY (±2.0% target) vs ALL (includes ±2% to ±3% secondary close alternatives)
-  const [filterMode, setFilterMode] = useState<'PRIMARY' | 'ALL'>('PRIMARY');
+  const [filterMode, setFilterMode] = useState('PRIMARY');
 
   // Determine active list & titles according to strict mutually exclusive rim-based categories
   let fullCategoryList = sameRimCandidates;
@@ -166,22 +152,22 @@ export const CandidatesList: React.FC<CandidatesListProps> = ({
                 // Sidewall calculation in mm
                 const sidewallMm = (item.width * item.aspectRatio) / 100;
                 const sidewallDisplay = unit === 'IN'
-                  ? `${(sidewallMm / 25.4).toFixed(2)} in`
+                  ? `${(sidewallMm / MM_PER_INCH).toFixed(2)} in`
                   : `${sidewallMm.toFixed(1)} mm`;
 
                 // Width display
                 const widthDisplay = unit === 'IN'
-                  ? `${(item.width / 25.4).toFixed(2)} in`
+                  ? `${(item.width / MM_PER_INCH).toFixed(2)} in`
                   : `${item.width} mm`;
 
                 // Diameter display
                 const diameterDisplay = unit === 'IN'
-                  ? `${(item.overallDiameter / 25.4).toFixed(2)} in`
+                  ? `${(item.overallDiameter / MM_PER_INCH).toFixed(2)} in`
                   : `${item.overallDiameter.toFixed(1)} mm`;
 
                 // Circumference display
                 const circumferenceDisplay = unit === 'IN'
-                  ? `${(item.circumference / 25.4).toFixed(2)} in`
+                  ? `${(item.circumference / MM_PER_INCH).toFixed(2)} in`
                   : `${item.circumference.toFixed(1)} mm`;
 
                 // Ride height change string
@@ -199,7 +185,7 @@ export const CandidatesList: React.FC<CandidatesListProps> = ({
                         : idx % 2 === 0 ? 'bg-white hover:bg-slate-50' : 'bg-[#F8FAFC] hover:bg-slate-100/60'
                     }`}
                   >
-                    {/* Tyre Size - Always conventional format */}
+                    {/* Tyre Size */}
                     <td className="py-3 px-4 font-semibold text-[#172033]">
                       <div className="flex items-center gap-1.5">
                         {isSelected && <CheckCircle2 className="w-3.5 h-3.5 text-[#087FEA] flex-shrink-0" />}
@@ -247,7 +233,7 @@ export const CandidatesList: React.FC<CandidatesListProps> = ({
                       {item.revsPerKm.toFixed(1)}
                     </td>
 
-                    {/* Difference Badge (Within Target vs Outside Target) */}
+                    {/* Difference Badge */}
                     <td className="py-3 px-4 text-right font-semibold">
                       {item.isWithinTarget ? (
                         <div className="flex flex-col items-end gap-0.5">

@@ -1,48 +1,38 @@
 'use client';
 
 import React, { useState } from 'react';
-import { TyreDimension, UnitSystem, VehicleData } from '../types/tyre';
 import {
   AVAILABLE_WIDTHS,
   AVAILABLE_ASPECT_RATIOS,
   AVAILABLE_RIM_DIAMETERS,
   MM_PER_INCH,
-} from '../lib/constants';
-import vehiclesDataRaw from '../data/vehicles.json';
+} from '../lib/constants.js';
+import vehiclesData from '../data/vehicles.json';
 import { ArrowRight, Car, Sliders, Check, HelpCircle } from 'lucide-react';
 
-const vehiclesData = vehiclesDataRaw as VehicleData[];
-
-interface TyreInputCardProps {
-  currentInput: TyreDimension;
-  onCalculate: (dimension: TyreDimension) => void;
-  unit: UnitSystem;
-  onUnitChange: (unit: UnitSystem) => void;
-}
-
-export const TyreInputCard: React.FC<TyreInputCardProps> = ({
+export const TyreInputCard = ({
   currentInput,
   onCalculate,
   unit,
   onUnitChange,
 }) => {
-  const [inputMode, setInputMode] = useState<'DIMENSIONS' | 'VEHICLE'>('DIMENSIONS');
-  const [showHelper, setShowHelper] = useState<boolean>(false);
-  const [isCustomWidth, setIsCustomWidth] = useState<boolean>(false);
+  const [inputMode, setInputMode] = useState('DIMENSIONS');
+  const [showHelper, setShowHelper] = useState(false);
+  const [isCustomWidth, setIsCustomWidth] = useState(false);
 
   // Canonical internal inputs (width in mm, aspectRatio %, rimDiameter in inches)
-  const [width, setWidth] = useState<number>(currentInput.width);
-  const [aspectRatio, setAspectRatio] = useState<number>(currentInput.aspectRatio);
-  const [rimDiameter, setRimDiameter] = useState<number>(currentInput.rimDiameter);
-  const [customWidthInput, setCustomWidthInput] = useState<string>('');
+  const [width, setWidth] = useState(currentInput.width);
+  const [aspectRatio, setAspectRatio] = useState(currentInput.aspectRatio);
+  const [rimDiameter, setRimDiameter] = useState(currentInput.rimDiameter);
+  const [customWidthInput, setCustomWidthInput] = useState('');
 
   // Vehicle select states
-  const [selectedMake, setSelectedMake] = useState<string>('');
-  const [selectedModel, setSelectedModel] = useState<string>('');
-  const [selectedVariant, setSelectedVariant] = useState<string>('');
+  const [selectedMake, setSelectedMake] = useState('');
+  const [selectedModel, setSelectedModel] = useState('');
+  const [selectedVariant, setSelectedVariant] = useState('');
 
   // Sync internal state when parent props change
-  const [prevInput, setPrevInput] = useState<TyreDimension>(currentInput);
+  const [prevInput, setPrevInput] = useState(currentInput);
   if (
     currentInput.width !== prevInput.width ||
     currentInput.aspectRatio !== prevInput.aspectRatio ||
@@ -65,7 +55,7 @@ export const TyreInputCard: React.FC<TyreInputCardProps> = ({
     (v) => v.make === selectedMake && v.model === selectedModel
   );
 
-  const handleVehicleSelect = (variantName: string) => {
+  const handleVehicleSelect = (variantName) => {
     setSelectedVariant(variantName);
     const vehicleMatch = vehiclesData.find(
       (v) => v.make === selectedMake && v.model === selectedModel && v.variant === variantName
@@ -83,12 +73,11 @@ export const TyreInputCard: React.FC<TyreInputCardProps> = ({
     }
   };
 
-  const handleCustomWidthChange = (valStr: string) => {
+  const handleCustomWidthChange = (valStr) => {
     setCustomWidthInput(valStr);
     const valNum = parseFloat(valStr);
     if (!isNaN(valNum) && valNum > 0) {
       if (unit === 'IN') {
-        // Convert input inches to internal mm
         setWidth(valNum * MM_PER_INCH);
       } else {
         setWidth(valNum);
@@ -96,7 +85,7 @@ export const TyreInputCard: React.FC<TyreInputCardProps> = ({
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
     onCalculate({ width, aspectRatio, rimDiameter });
   };

@@ -1,13 +1,7 @@
 import React from 'react';
-import { TyreSpecs, UnitSystem } from '../types/tyre';
-import { MM_PER_INCH, KM_PER_MILE } from '../lib/constants';
+import { MM_PER_INCH, KM_PER_MILE } from '../lib/constants.js';
 
-interface OriginalTyreCardProps {
-  specs: TyreSpecs;
-  unit: UnitSystem;
-}
-
-export const OriginalTyreCard: React.FC<OriginalTyreCardProps> = ({ specs, unit }) => {
+export const OriginalTyreCard = ({ specs, unit }) => {
   // Conversions for dual unit technical specs
   const widthInches = (specs.width / MM_PER_INCH).toFixed(2);
   const sidewallInches = (specs.sidewallHeight / MM_PER_INCH).toFixed(2);
@@ -164,4 +158,3 @@ export const OriginalTyreCard: React.FC<OriginalTyreCardProps> = ({ specs, unit 
     </div>
   );
 };
-

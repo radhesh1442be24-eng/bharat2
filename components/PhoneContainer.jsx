@@ -1,10 +1,6 @@
 import React from 'react';
 
-interface PhoneContainerProps {
-  children: React.ReactNode;
-}
-
-export const PhoneContainer: React.FC<PhoneContainerProps> = ({ children }) => {
+export const PhoneContainer = ({ children }) => {
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col items-center justify-start py-0 sm:py-6 px-0 font-sans antialiased">
       {/* 390px Fixed Master Phone Frame */}

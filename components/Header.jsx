@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import { Menu, X, MapPin, Search } from 'lucide-react';
 
-export const Header: React.FC = () => {
+export const Header = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -114,8 +114,3 @@ export const Header: React.FC = () => {
     </header>
   );
 };
-
-
-
-
-

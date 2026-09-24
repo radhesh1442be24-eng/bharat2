@@ -1,7 +1,7 @@
 import React from 'react';
 import { ShieldCheck, Settings, Car } from 'lucide-react';
 
-export const HeroSection: React.FC = () => {
+export const HeroSection = () => {
   return (
     <section className="bg-gradient-to-b from-[#0c1836] to-[#0a1226] px-4 pt-5 pb-6 border-b border-slate-800/50 relative overflow-hidden">
       {/* Background glowing arc matching reference image header backdrop */}

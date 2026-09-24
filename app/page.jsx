@@ -1,41 +1,35 @@
 'use client';
 
 import React, { useState, useMemo } from 'react';
-import { MainLayoutContainer } from '../components/MainLayoutContainer';
-import { Header } from '../components/Header';
-import { CompactTitle } from '../components/CompactTitle';
-import { TyreInputCard } from '../components/TyreInputCard';
-import { OriginalTyreCard } from '../components/OriginalTyreCard';
-import { CategoryTabs } from '../components/CategoryTabs';
-import { CandidatesList } from '../components/CandidatesList';
-import { EducationalSection } from '../components/EducationalSection';
-import { FitmentDisclaimer } from '../components/FitmentDisclaimer';
-import { Footer } from '../components/Footer';
-import {
-  TyreDimension,
-  CandidateTyre,
-  UnitSystem,
-  CandidateCategory,
-} from '../types/tyre';
-import { calculateTyreSpecs } from '../lib/tyreCalculator';
-import { getCandidateTyres } from '../lib/standardTyres';
+import { MainLayoutContainer } from '../components/MainLayoutContainer.jsx';
+import { Header } from '../components/Header.jsx';
+import { CompactTitle } from '../components/CompactTitle.jsx';
+import { TyreInputCard } from '../components/TyreInputCard.jsx';
+import { OriginalTyreCard } from '../components/OriginalTyreCard.jsx';
+import { CategoryTabs } from '../components/CategoryTabs.jsx';
+import { CandidatesList } from '../components/CandidatesList.jsx';
+import { EducationalSection } from '../components/EducationalSection.jsx';
+import { FitmentDisclaimer } from '../components/FitmentDisclaimer.jsx';
+import { Footer } from '../components/Footer.jsx';
+import { calculateTyreSpecs } from '../lib/tyreCalculator.js';
+import { getCandidateTyres } from '../lib/standardTyres.js';
 
 export default function Home() {
   // Unit system state ('MM' or 'IN')
-  const [unit, setUnit] = useState<UnitSystem>('MM');
+  const [unit, setUnit] = useState('MM');
 
   // Default tyre input: 215/60 R16
-  const [currentDimension, setCurrentDimension] = useState<TyreDimension>({
+  const [currentDimension, setCurrentDimension] = useState({
     width: 215,
     aspectRatio: 60,
     rimDiameter: 16,
   });
 
   // Active Category tab: default SAMERIM
-  const [activeCategory, setActiveCategory] = useState<CandidateCategory>('SAMERIM');
+  const [activeCategory, setActiveCategory] = useState('SAMERIM');
 
   // Selected candidate state
-  const [selectedCandidate, setSelectedCandidate] = useState<CandidateTyre | null>(null);
+  const [selectedCandidate, setSelectedCandidate] = useState(null);
 
   // Compute specs for original tyre (canonical internal specs)
   const originalSpecs = useMemo(() => {
@@ -48,7 +42,7 @@ export default function Home() {
   }, [originalSpecs]);
 
   // Handle calculation update
-  const handleCalculate = (newDimension: TyreDimension) => {
+  const handleCalculate = (newDimension) => {
     setCurrentDimension(newDimension);
     setSelectedCandidate(null);
   };

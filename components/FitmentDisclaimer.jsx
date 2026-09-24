@@ -1,7 +1,7 @@
 import React from 'react';
 import { Info } from 'lucide-react';
 
-export const FitmentDisclaimer: React.FC = () => {
+export const FitmentDisclaimer = () => {
   return (
     <section className="py-1">
       <div className="bg-white border border-[#D9E1EA] rounded-md p-3.5 sm:p-4 shadow-sm text-[#06152A]">
@@ -23,5 +23,3 @@ export const FitmentDisclaimer: React.FC = () => {
     </section>
   );
 };
-
-

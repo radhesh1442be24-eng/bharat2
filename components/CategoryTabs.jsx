@@ -2,21 +2,8 @@
 
 import React from 'react';
 import { ArrowUp, ArrowDown, Disc, CircleDot } from 'lucide-react';
-import { CandidateCategory } from '../types/tyre';
 
-export type CategoryType = CandidateCategory;
-
-interface CategoryTabsProps {
-  activeCategory: CategoryType;
-  onSelectCategory: (category: CategoryType) => void;
-  sameRimCount: number;
-  downsizeCount: number;
-  upsizeCount: number;
-  similarCount: number;
-  origRim: number;
-}
-
-export const CategoryTabs: React.FC<CategoryTabsProps> = ({
+export const CategoryTabs = ({
   activeCategory,
   onSelectCategory,
   sameRimCount,

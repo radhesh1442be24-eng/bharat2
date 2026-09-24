@@ -2,7 +2,7 @@ import React from 'react';
 import Link from 'next/link';
 import { ShieldCheck, ChevronRight } from 'lucide-react';
 
-export const CompactTitle: React.FC = () => {
+export const CompactTitle = () => {
   return (
     <div className="py-1 sm:py-2">
       {/* Breadcrumbs */}
@@ -39,5 +39,3 @@ export const CompactTitle: React.FC = () => {
     </div>
   );
 };
-
-

@@ -3,7 +3,7 @@
 import React from 'react';
 import { BookOpen, HelpCircle, Gauge, Scale } from 'lucide-react';
 
-export const EducationalSection: React.FC = () => {
+export const EducationalSection = () => {
   return (
     <section className="flex flex-col gap-4 py-2">
       {/* Section Header */}
@@ -121,4 +121,3 @@ export const EducationalSection: React.FC = () => {
     </section>
   );
 };
-
