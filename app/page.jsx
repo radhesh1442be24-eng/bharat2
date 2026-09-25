@@ -98,6 +98,8 @@ export default function Home() {
         downsizeCandidates={candidateResults.downsize}
         similarCandidates={candidateResults.similar}
         origRim={currentDimension.rimDiameter}
+        originalSpecs={originalSpecs}
+        selectedVehicle={selectedVehicle}
         selectedCandidate={selectedCandidate}
         onSelectCandidate={setSelectedCandidate}
         unit={unit}
