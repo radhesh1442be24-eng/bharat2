@@ -8,10 +8,12 @@ A modern, high-precision web application for calculating tyre dimensions, explor
 
 The **Bharat Tyres Tyre Upsize Calculator** provides automotive professionals, tire dealers, and vehicle owners with accurate, data-backed tyre sizing recommendations.
 
-The calculator operates as a mathematical screening tool and classifies candidates into **three distinct calculated statuses**:
-- 🟢 **Close calculated alternative**
-- 🟡 **Possible alternative — verify fitment**
-- 🔴 **Outside calculated range**
+The calculator serves as a **mathematical and dimensional screening tool**. It evaluates candidate sizes based on mathematical similarity to the original specification and does not guarantee physical vehicle fitment.
+
+Candidates are classified into **Three-Status Classification**:
+- 🟢 **Green — Close calculated alternative**
+- 🟡 **Yellow — Possible alternative — verify fitment**
+- 🔴 **Red — Outside calculated range**
 
 ---
 
@@ -35,37 +37,38 @@ Green / Yellow / Red screening is applied
 Results are displayed
 ```
 
-1. **Input Stage**: The user enters custom tyre dimensions (Width, Aspect Ratio, Rim Diameter) or selects a vehicle from the built-in database.
-2. **Calculation Stage**: Full-precision technical specs are computed (Sidewall, Rim Diameter mm, Overall Diameter, Circumference, Revs/km).
-3. **Category Assignment**: Candidates are sorted into mutually exclusive rim categories (`SAMERIM`, `DOWNSIZE`, `UPSIZE`, `SIMILAR`).
-4. **Compatibility Screening**: Percentage diameter difference and percentage section width change are calculated against threshold limits.
-5. **3-Status Classification**: Candidates are assigned `GREEN`, `YELLOW`, or `RED` status.
+1. **Input Stage**: The user inputs custom tyre dimensions (Width, Aspect Ratio, Rim Diameter) or selects a vehicle make, model, and variant from the built-in Indian vehicle database.
+2. **Calculation Stage**: Full-precision technical specs are computed (Sidewall, Rim Diameter mm, Overall Diameter, Rolling Circumference, Revolutions/km).
+3. **Category Assignment**: Candidates are sorted into mutually exclusive rim categories (`Same Rim`, `Downsize`, `Upsize`, `Closest Diameter`).
+4. **Compatibility Screening**: Percentage diameter difference and percentage section width change are evaluated against screening limits.
+5. **Three-Status Classification**: Candidates are assigned `Green`, `Yellow`, or `Red` status based on unrounded internal calculations.
 6. **Result Presentation**: Candidates are presented in strict priority order (Green $\rightarrow$ Yellow $\rightarrow$ Red) with expandable detailed technical comparisons.
 
 ---
 
 ## 3. How Tyre Candidates Are Determined
 
-Tyre candidates are generated from an authentic commercial tyre dataset of 373 standard sizes (spanning R13 to R22 rim diameters).
+The calculator generates candidate tyre sizes dynamically from standard commercial dimension presets:
+- **Standard Widths**: 135 mm to 335 mm (in 10 mm increments)
+- **Standard Aspect Ratios**: 25% to 85% (in 5% increments)
+- **Rim Diameters**: From $R_{\text{orig}} - 2$ up to $R_{\text{orig}} + 3$ (spanning R12 to R24)
 
-Candidates are separated into:
+Candidates are filtered for realistic passenger vehicle proportions (sidewall height between 40 mm and 220 mm) and categorized into:
 - **Same Rim**: Alternative tyre sizes using the exact same rim diameter ($R_{\text{cand}} = R_{\text{orig}}$).
 - **Downsize**: Alternative tyre sizes on smaller rim diameters ($R_{\text{cand}} < R_{\text{orig}}$).
 - **Upsize**: Alternative tyre sizes on larger rim diameters ($R_{\text{cand}} > R_{\text{orig}}$).
-- **Closest Diameter**: Full spectrum of candidate sizes sorted strictly by absolute overall diameter difference.
-
-Each candidate size is evaluated mathematically against calculated screening thresholds.
+- **Closest Diameter**: Candidate sizes sorted strictly by absolute overall diameter difference.
 
 > [!NOTE]
-> Mathematical candidates are calculated dimensional alternatives and are not guaranteed physical vehicle fitments.
+> Mathematical candidate sizes are calculated dimensional alternatives and are not automatically approved for physical vehicle installation.
 
 ---
 
 ## 4. Calculation Formulas
 
-All calculations use **full precision internally**; rounding is performed only when rendering display strings in the UI layer.
+All calculations use **full precision internally**; rounding is performed only when rendering display strings in the UI presentation layer.
 
-### Core Physical Specs:
+### Core Physical Specs (`lib/tyreCalculator.js`):
 - **Sidewall Height ($H$)**:
   $$\text{Sidewall Height (mm)} = \frac{\text{Width (mm)} \times \text{Aspect Ratio}}{100}$$
 
@@ -96,22 +99,22 @@ All calculations use **full precision internally**; rounding is performed only w
 
 ---
 
-## 5. Classification Logic
+## 5. Three-Status Classification Logic
 
 Fitment compatibility is classified using percentage-based dimensional screening:
 
-### 🟢 GREEN — Close Calculated Alternative
+### 🟢 Green — Close calculated alternative
 - **Condition**: $\text{diameterDifferencePct} \le 2.0\%$ **AND** $\text{widthChangePct} \le 10.0\%$
 - **Heading**: `Close calculated alternative`
 - **Description**: `"Very close in calculated dimensions; verify vehicle fitment"`
 
-### 🟡 YELLOW — Possible Alternative — Verify Fitment
-- **Condition**: Does not qualify for Green, but $\text{diameterDifferencePct} \le 3.0\%$ **AND** $\text{widthChangePct} \le 15.0\%$
+### 🟡 Yellow — Possible alternative — verify fitment
+- **Condition**: Candidate is NOT Green, but $\text{diameterDifferencePct} \le 3.0\%$ **AND** $\text{widthChangePct} \le 15.0\%$
 - **Heading**: `Possible alternative — verify fitment`
 - **Description**: `"Dimensionally possible; professional fitment verification required"`
 
-### 🔴 RED — Outside Calculated Range
-- **Condition**: $\text{diameterDifferencePct} > 3.0\%$ **OR** $\text{widthChangePct} > 15.0\%$
+### 🔴 Red — Outside calculated range
+- **Condition**: $\text{diameterDifferencePct} > 3.0\%$ **OR** $\text{widthChangePct} > 15.0\%$ (or mechanical rating check failure)
 - **Heading**: `Outside calculated range`
 - **Description**: `"Significant dimensional difference"`
 
@@ -122,10 +125,10 @@ Fitment compatibility is classified using percentage-based dimensional screening
 Fixed millimetre steps ($\pm 10\text{ mm}$, $\pm 20\text{ mm}$) are not proportionally equal across different original tyre widths.
 
 For example:
-- A $20\text{ mm}$ width increase on a $175\text{ mm}$ tyre represents an $11.4\%$ change.
-- A $20\text{ mm}$ width increase on a $275\text{ mm}$ tyre represents a $7.3\%$ change.
+- A $20\text{ mm}$ width increase on a $175\text{ mm}$ tyre represents an $11.4\%$ increase.
+- A $20\text{ mm}$ width increase on a $275\text{ mm}$ tyre represents a $7.3\%$ increase.
 
-Using proportional percentage section width change ($\text{widthChangePct} = \frac{|W_{\text{cand}} - W_{\text{orig}}|}{W_{\text{orig}}} \times 100$) ensures fair, consistent screening across all vehicle and tyre classes.
+Using proportional percentage section width change ($\text{widthChangePct} = \frac{|W_{\text{cand}} - W_{\text{orig}}|}{W_{\text{orig}}} \times 100$) ensures fair, consistent screening across all vehicle and tyre size classes.
 
 ---
 
@@ -134,7 +137,7 @@ Using proportional percentage section width change ($\text{widthChangePct} = \fr
 Calculated compatibility evaluates mathematical dimensional proximity only. It does not guarantee physical vehicle fitment.
 
 Actual physical fitment can additionally depend on:
-- Recommended rim width range (ETRTO standard)
+- Recommended rim-width compatibility range (ETRTO standard)
 - Wheel offset (ET) and backspacing
 - Pitch Circle Diameter (PCD) and Centre Bore
 - Brake disc/caliper clearance
@@ -149,11 +152,13 @@ Actual physical fitment can additionally depend on:
 
 Search results are displayed according to strict status hierarchy:
 
-1. 🟢 **Green** (Close calculated alternative)
-2. 🟡 **Yellow** (Possible alternative — verify fitment)
-3. 🔴 **Red** (Outside calculated range)
+1. 🟢 **Green — Close calculated alternative**
+2. 🟡 **Yellow — Possible alternative — verify fitment**
+3. 🔴 **Red — Outside calculated range**
 
-Within each status group, candidates are sorted by **smallest absolute diameter difference percentage** ($|\Delta_{\text{dia}}|$) first, followed by smallest width change percentage.
+Within each status group, candidates are sorted by:
+1. **Smallest absolute diameter difference percentage** ($|\Delta_{\text{dia}}|$)
+2. **Smallest width change percentage** ($\Delta_{\text{width}}$)
 
 ---
 
@@ -162,13 +167,13 @@ Within each status group, candidates are sorted by **smallest absolute diameter 
 The calculator provides a dual-unit system toggle (`MM` / `IN`):
 - **MM Mode**: Displays width in millimetres, sidewall in mm, overall diameter in mm, clearance in mm.
 - **IN Mode**: Displays width in inches ($W / 25.4$), sidewall in inches, overall diameter in inches, clearance in inches.
-- Conversion between units uses exact conversion constant $1\text{ inch} = 25.4\text{ mm}$ without precision loss.
+- Conversion between units uses exact factor $1\text{ inch} = 25.4\text{ mm}$. Unit switching alters display formatting strings only; underlying internal values remain unrounded floats.
 
 ---
 
 ## 10. Testing & QA Documentation
 
-The project includes an automated test suite verifying 304 test cases across calculation logic, boundary limits, unit conversions, and screening rules.
+The project includes an automated test suite verifying **304 test cases** across calculation logic, boundary limits, unit conversions, edge cases, and screening rules.
 
 Detailed test results and boundary matrices are documented in:
 [docs/tyre-calculator-test-results.md](file:///c:/Users/Hp/OneDrive/Desktop/bharat-cal2/docs/tyre-calculator-test-results.md)
@@ -186,7 +191,7 @@ node scratch/qaAuditScript.js
 - Node.js v18.0 or higher
 - npm v9.0 or higher
 
-### Step-by-Step Setup:
+### Scripts in `package.json`:
 
 1. **Install Dependencies**:
    ```bash
@@ -221,7 +226,7 @@ node scratch/qaAuditScript.js
 ```
 bharat-cal2/
 ├── app/
-│   ├── calculator/page.jsx    # Dedicated calculator route
+│   ├── calculator/page.jsx    # Dedicated calculator page route
 │   ├── globals.css            # Global Tailwind CSS styles
 │   ├── layout.jsx             # Root layout container & HTML metadata
 │   └── page.jsx               # Main application page (reactive calculator state)
@@ -233,27 +238,27 @@ bharat-cal2/
 │   ├── FitmentDisclaimer.jsx  # Fitment safety notice banner
 │   ├── Footer.jsx             # Brand footer
 │   ├── Header.jsx             # Header with logo & navigation
-│   ├── HeroSection.jsx        # Landing hero banner
-│   ├── MainLayoutContainer.jsx# App-wide responsive layout wrapper
+│   ├── HeroSection.jsx        # Hero banner
+│   ├── MainLayoutContainer.jsx# App-wide layout wrapper
 │   ├── OriginalTyreCard.tsx   # Specs overview with dynamic SVG tyre visual
-│   ├── PhoneContainer.jsx     # Mobile frame wrapper preview
+│   ├── PhoneContainer.jsx     # Mobile preview container
 │   └── TyreInputCard.jsx      # Dual-mode input form (manual specs or car lookup)
 ├── data/
-│   └── vehicles.json          # Raw vehicle database JSON
+│   └── vehicles.json          # Indian passenger vehicle database JSON
 ├── docs/
 │   └── tyre-calculator-test-results.md # Automated QA test results & boundary matrix
 ├── lib/
-│   ├── constants.js           # Centralized limits (±2% target, ±3% limit, presets)
+│   ├── constants.js           # Centralized target limits (±2% target, ±3% limit, presets)
 │   ├── fitmentScreening.js    # 7-stage fitment screening & 3-status engine
-│   ├── standardTyres.js       # Commercial tyre dataset (373 sizes) & candidate generator
+│   ├── standardTyres.js       # Dynamic candidate generator & priority sorter
 │   ├── tyreCalculator.js      # Core mathematical calculation functions
-│   ├── tyreTechnicalData.js   # Rim width range (ETRTO) & speed/load index logic
+│   ├── tyreTechnicalData.js   # ETRTO rim width ranges & speed/load rating helpers
 │   └── vehiclesData.js        # Comprehensive Indian market passenger vehicle database
-├── public/                    # Static assets, icons, and background images
+├── public/                    # Static graphics, icons, and background images
 ├── scratch/
 │   ├── qaAuditScript.js       # Automated 304-test QA audit script
-│   └── testCalculator.js      # Result ordering & candidate generation verification script
-└── README.md                  # Comprehensive product documentation
+│   └── testCalculator.js      # Result ordering verification script
+└── README.md                  # Audited project documentation
 ```
 
 ---

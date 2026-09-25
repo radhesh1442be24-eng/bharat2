@@ -59,11 +59,11 @@ export const CandidatesList = ({
 
   // Filter current list based on filter mode
   const currentList = filterMode === 'PRIMARY'
-    ? fullCategoryList.filter((c) => c.isWithinTarget || c.isManufacturerApproved)
+    ? fullCategoryList.filter((c) => c.isWithinTarget)
     : fullCategoryList;
 
-  const primaryCount = fullCategoryList.filter((c) => c.isWithinTarget || c.isManufacturerApproved).length;
-  const secondaryCount = fullCategoryList.filter((c) => !c.isWithinTarget && !c.isManufacturerApproved).length;
+  const primaryCount = fullCategoryList.filter((c) => c.isWithinTarget).length;
+  const secondaryCount = fullCategoryList.filter((c) => !c.isWithinTarget).length;
 
   const handleRowClick = (item) => {
     if (onSelectCandidate) {
